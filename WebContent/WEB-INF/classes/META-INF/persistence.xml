@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="assignment3" >
-		<non-jta-data-source>java:jboss/datasources/assignment3</non-jta-data-source>
+		<non-jta-data-source>java:jboss/datasources/schedule</non-jta-data-source>
 		<class>com.entity.Employee</class>
 		<class>com.entity.Timesheet</class>
 		<class>com.entity.TimesheetRow</class>
