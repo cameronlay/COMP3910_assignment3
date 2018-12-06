@@ -57,6 +57,12 @@ public class Employee implements Serializable {
     public Employee() {
 
     }
+    public Employee(String name, String userName, String password, boolean admin) {
+        this.name = name;
+        this.userName = userName;
+        this.password = password;
+        this.admin = admin;
+    }
 
     /**
      * Gets the employeeID.
