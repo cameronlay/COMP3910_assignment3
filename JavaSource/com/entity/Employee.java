@@ -15,6 +15,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
  * The Persistent class for the Employee database table.
  * @author Cameron
@@ -155,6 +158,13 @@ public class Employee implements Serializable {
      */
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+    
+    @Override
+    public String toString() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        String json = gson.toJson(this);  
+        return json + "\n";
     }
 
 }
