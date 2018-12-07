@@ -12,6 +12,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -114,7 +115,6 @@ public class EmployeeService {
             em.flush();
             em.refresh(employeeToBeAdded);
             em.getTransaction().commit();
-//            em.close();
 
             returnCode = "{" + "\"href\":\"http://localhost:8080/COMP3910_assignment3/v1/user/" + employeeToBeAdded.getEmployeeId()
                     + "\"," + "\"message\":\"New Employee successfully created.\"" + "}";
@@ -171,6 +171,51 @@ public class EmployeeService {
             return Response.status(500).entity(returnCode).build();
         }
         return Response.ok(returnCode).build();
+    }
+    
+    @Transactional
+    @PUT
+    @Path("employees/{id}")
+    @Consumes("application/json")
+    public Response updateEmployee(@HeaderParam("Authorization") String token, @PathParam("id") int id, String payload) {
+        token = token.replace("Bearer ", "");
+        if(!validateToken(token)) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+        
+        Employee currentEmployee = getEmployeeByToken(token);
+        
+        if(currentEmployee == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        
+        if(!currentEmployee.isAdmin() || currentEmployee.getEmployeeId() != id) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+        
+        if (currentEmployee.getEmployeeId() == id) {
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
+        }
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        Employee employee = gson.fromJson(payload, Employee.class);
+
+        System.out.println(employee);
+        em = Resource.getEntityManager();
+        em.getTransaction().begin();
+        Employee entity = em.find(Employee.class, id);
+        if (entity == null) {
+            String returnCode = "{ Employee not found }";
+            return Response.status(404).entity(returnCode).build();
+        }
+
+        entity.setPassword(employee.getPassword());
+        em.persist(entity);
+        em.flush();
+        em.getTransaction().commit();
+        String returnCode = "{" + employee.getName() 
+            + ":\"Employee successfully edited.\"" + "}";
+        return Response.status(201).entity(returnCode).build();
     }
     
     private Token getToken(String token) {
