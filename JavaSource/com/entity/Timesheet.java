@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Sunguk Ham
  * @version 1.0
  */
-@XmlRootElement(name="timesheet")
+@XmlRootElement(name = "timesheet")
 @Entity
 @Table(name = "Timesheet")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -75,7 +75,7 @@ public class Timesheet implements Serializable {
      * get employee id.
      * @return employee id
      */
-    @XmlElement(name="employeeId")
+    @XmlElement(name = "employeeId")
     public Long getEmployeeId() {
         return employeeId;
     }
@@ -92,7 +92,7 @@ public class Timesheet implements Serializable {
      * get end of the week.
      * @return end of the week
      */
-    @XmlElement(name="endWeek")
+    @XmlElement(name = "endWeek")
     public Date getEndWeek() {
         return endWeek;
     }
@@ -109,7 +109,7 @@ public class Timesheet implements Serializable {
      * get start of the week.
      * @return start of the week
      */
-    @XmlElement(name="startWeek")
+    @XmlElement(name = "startWeek")
     public Date getStartWeek() {
         return startWeek;
     }
@@ -122,15 +122,27 @@ public class Timesheet implements Serializable {
         this.startWeek = startWeek;
     }
 
-    @XmlElement(name="timesheetRows")
+    /**
+     * timesheetRows getter.
+     * @return timesheetRows
+     */
+    @XmlElement(name = "timesheetRows")
     public List<TimesheetRow> getTimesheetRows() {
         return timesheetRows;
     }
 
+    /**
+     * timesheetRows setter.
+     * @param timesheetRows to be set.
+     */
     public void setTimesheetRows(List<TimesheetRow> timesheetRows) {
         this.timesheetRows = timesheetRows;
     }
 
+    /**
+     * Adds a timesheet row to the timesheetRows list.
+     * @param timesheetRow to be added
+     */
     public void addTimesheetRow(TimesheetRow timesheetRow) {
         timesheetRows.add(timesheetRow);
     }

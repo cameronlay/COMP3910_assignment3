@@ -23,7 +23,7 @@ import com.google.gson.GsonBuilder;
  * @author Cameron
  * @version 1.0
  */
-@XmlRootElement(name="employee")
+@XmlRootElement(name = "employee")
 @Entity
 @Table(name = "Employee")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -60,7 +60,21 @@ public class Employee implements Serializable {
     public Employee() {
 
     }
-    public Employee(String firstName, String lastName, String userName, String password, boolean admin) {
+    
+    /**
+     * Constructor that accepts firstName, lastName, username
+     * password and if they are an admin.
+     * @param firstName new firstname
+     * @param lastName new lastname
+     * @param userName new username
+     * @param password new password
+     * @param admin status
+     */
+    public Employee(String firstName, 
+            String lastName, 
+            String userName, 
+            String password, 
+            boolean admin) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
@@ -89,24 +103,32 @@ public class Employee implements Serializable {
      * Gets the employee name.
      * @return employee name
      */
-    @XmlElement(name="firstName")
+    @XmlElement(name = "firstName")
     public String getFirstName() {
         return firstName;
     }
 
     /**
      * Sets the employee name.
-     * @param name new employee name
+     * @param firstName new employee firstName
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    @XmlElement(name="lastName")
+    /**
+     * lastName getter.
+     * @return lastName
+     */
+    @XmlElement(name = "lastName")
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * lastName setter.
+     * @param lastName to be set
+     */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -115,7 +137,7 @@ public class Employee implements Serializable {
      * Gets the employee username.
      * @return employee username
      */
-    @XmlElement(name="userName")
+    @XmlElement(name = "userName")
     public String getUserName() {
         return userName;
     }
@@ -149,7 +171,7 @@ public class Employee implements Serializable {
      * Gets the date employee was created.
      * @return date employee was created
      */
-    @XmlElement(name="createdDate")
+    @XmlElement(name = "createdDate")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -166,7 +188,7 @@ public class Employee implements Serializable {
      * Check to see if employee is an admin.
      * @return true if the employee is an admin
      */
-    @XmlElement(name="isAdmin")
+    @XmlElement(name = "isAdmin")
     public boolean isAdmin() {
         return admin;
     }
@@ -181,7 +203,10 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create();
         String json = gson.toJson(this);
         return json + "\n";
     }

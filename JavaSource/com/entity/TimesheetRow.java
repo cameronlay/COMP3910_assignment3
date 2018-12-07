@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Sunguk Ham
  * @version 1.0
  */
-@XmlRootElement(name="timesheetRow")
+@XmlRootElement(name = "timesheetRow")
 @Entity
 @Table(name = "TimesheetRow")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -93,7 +93,7 @@ public class TimesheetRow implements Serializable {
      * get timesheet id.
      * @return timesheet id
      */
-    @XmlElement(name="timesheetId")
+    @XmlElement(name = "timesheetId")
     public Long getTimesheetId() {
         return timesheetId;
     }
@@ -110,7 +110,7 @@ public class TimesheetRow implements Serializable {
      * get project id.
      * @return project id
      */
-    @XmlElement(name="projectId")
+    @XmlElement(name = "projectId")
     public Long getProjectId() {
         return projectId;
     }
@@ -127,7 +127,7 @@ public class TimesheetRow implements Serializable {
      * get work package id.
      * @return work package id
      */
-    @XmlElement(name="workPackageId")
+    @XmlElement(name = "workPackageId")
     public String getWorkPackageId() {
         return workPackageId;
     }
