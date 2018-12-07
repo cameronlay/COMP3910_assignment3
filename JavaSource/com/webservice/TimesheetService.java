@@ -32,7 +32,8 @@ public class TimesheetService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<Timesheet> getAllTimesheets(@HeaderParam("authentication") String token) {
+    public List<Timesheet> getAllTimesheets(@HeaderParam("Authorization") String token) {
+        token = token.replace("Bearer ", "");
         if (!validateToken(token)) {
             return null;
         }
