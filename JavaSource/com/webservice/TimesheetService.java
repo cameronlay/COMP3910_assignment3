@@ -123,7 +123,6 @@ public class TimesheetService {
             em.getTransaction().begin();
             em.persist(timesheet);
             em.getTransaction().commit();
-
             currentTimesheet = getTimesheetByEmployeeIdWeekNumber(currentEmployee.getEmployeeId(), getWeekNumber());
         } else {
             deleteTimesheetRowsByTimesheetId(currentTimesheet.getTimesheetId());
@@ -146,7 +145,7 @@ public class TimesheetService {
         return new Date(c.getTime().getTime());
     }
 
-    public Date getEndWeek() {
+    private final Date getEndWeek() {
         Calendar c = new GregorianCalendar();
         int currentDay = c.get(Calendar.DAY_OF_WEEK);
         int leftDays = Calendar.FRIDAY - currentDay;
