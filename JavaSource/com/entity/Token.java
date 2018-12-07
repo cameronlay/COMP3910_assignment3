@@ -13,7 +13,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="token")
+/**
+ * Token object.
+ * @author Cameron
+ * @version 1.0
+ *
+ */
+@XmlRootElement(name = "token")
 @Entity
 @Table(name = "Token")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -22,84 +28,143 @@ public class Token implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name="token")
+    @Column(name = "token")
     private String token;
-    @Column(name="employeeid")
+    @Column(name = "employeeid")
     private Long employeeId;
-    @Column(name="datecreated")
+    @Column(name = "datecreated")
     private Date dateCreated;
-    @Column(name="expirydate")
+    @Column(name = "expirydate")
     private Date expiryDate;
-    @Column(name="isadmin")
+    @Column(name = "isadmin")
     private boolean admin;
-    @Column(name="username")
+    @Column(name = "username")
     private String username;
-    @Column(name="isactive")
+    @Column(name = "isactive")
     private boolean active;
 
+    /**
+     * Basic constructor.
+     */
     public Token() {
 
     }
 
+    /**
+     * token getter.
+     * @return token
+     */
     @XmlAttribute
     public String getToken() {
         return token;
     }
 
+    /**
+     * token setter.
+     * @param token to be set
+     */
     public void setToken(String token) {
         this.token = token;
     }
 
-    @XmlElement(name="employeeId")
+    /**
+     * employeeId getter.
+     * @return employeeId
+     */
+    @XmlElement(name = "employeeId")
     public Long getEmployeeId() {
         return employeeId;
     }
 
+    /**
+     * employeeId setter.
+     * @param employeeId to be set
+     */
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
 
-    @XmlElement(name="dateCreated")
+    /**
+     * dateCreated getter.
+     * @return dateCreated
+     */
+    @XmlElement(name = "dateCreated")
     public Date getDateCreated() {
         return dateCreated;
     }
 
+    /**
+     * dateCreated setter.
+     * @param dateCreated to be set
+     */
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    @XmlElement(name="expiryDate")
+    /**
+     * expiryDate getter.
+     * @return expiryDate
+     */
+    @XmlElement(name = "expiryDate")
     public Date getExpiryDate() {
         return expiryDate;
     }
 
+    /**
+     * Sets expiry date.
+     * @param expiryDate to be set.
+     */
     public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
 
-    @XmlElement(name="isAdmin")
+    /**
+     * Admin getter.
+     * @return isAdmin
+     */
+    @XmlElement(name = "isAdmin")
     public boolean isAdmin() {
         return admin;
     }
 
+    /**
+     * Admin setter.
+     * @param admin new admin value
+     */
     public void setAdmin(boolean admin) {
         this.admin = admin;
     }
 
-    @XmlElement(name="userName")
+    /**
+     * Username getter.
+     * @return username
+     */
+    @XmlElement(name = "userName")
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Username setter.
+     * @param username username to be set
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    @XmlElement(name="isActive")
+    /**
+     * Active getter.
+     * @return active value
+     */
+    @XmlElement(name = "isActive")
     public boolean isActive() {
         return active;
     }
 
+    /**
+     * Active setter.
+     * @param active boolean to be set
+     */
     public void setActive(boolean active) {
         this.active = active;
     }

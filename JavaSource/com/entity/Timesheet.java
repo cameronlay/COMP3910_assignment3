@@ -123,8 +123,8 @@ public class Timesheet implements Serializable {
     }
 
     /**
-     * get timesheet rows.
-     * @return timesheet rows
+     * timesheetRows getter.
+     * @return timesheetRows
      */
     @XmlElement(name = "timesheetRows")
     public List<TimesheetRow> getTimesheetRows() {
@@ -132,20 +132,18 @@ public class Timesheet implements Serializable {
     }
 
     /**
-     * set timesheet rows.
-     * @param timesheetRows timesheetRows
+     * timesheetRows setter.
+     * @param timesheetRows to be set.
      */
     public void setTimesheetRows(List<TimesheetRow> timesheetRows) {
         this.timesheetRows = timesheetRows;
     }
 
     /**
-     * add timesheet row.
-     * @param timesheetRow timesheet row
+     * Adds a timesheet row to the timesheetRows list.
+     * @param timesheetRow to be added
      */
     public void addTimesheetRow(TimesheetRow timesheetRow) {
         timesheetRows.add(timesheetRow);
     }
-
-
 }

@@ -26,30 +26,43 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.qualifier.Resource;
 
+/**
+ * Service class which defines REST endpoints for the Employee object.
+ * @author Cameron
+ * @version 1.0
+ */
 @Path("/user")
 public class EmployeeService {
     
     @Inject
-    EntityManager em;
+    private EntityManager em;
     
+    /**
+     * Constructor which assigns the entity manager.
+     */
     public EmployeeService() {
         em = Resource.getEntityManager();
     }
     
+    /**
+     * Gets all employees.
+     * @param token Authentication token used in rest header.
+     * @return Response for rest call
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEmployees(@HeaderParam("Authorization") String token) {
         token = token.replace("Bearer ", "");
-        if(!validateToken(token)) {
+        if (!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         Employee currentEmployee = getEmployeeByToken(token);
         
-        if(currentEmployee == null) {
+        if (currentEmployee == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        if(!currentEmployee.isAdmin()) {
+        if (!currentEmployee.isAdmin()) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
         String response = null;
@@ -59,29 +72,43 @@ public class EmployeeService {
         return Response.ok(response).build();
     }
     
+    /**
+     * Gets a single employee.
+     * @param token Authentication token.
+     * @param id ID of employee to be found.
+     * @return Response for rest call.
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEmployee(@HeaderParam("Authorization") String token, @PathParam("id") long id) {
+    public Response getEmployee(@HeaderParam("Authorization") String token, 
+            @PathParam("id") long id) {
         token = token.replace("Bearer ", "");
-        if(!validateToken(token)) {
+        if (!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         Employee currentEmployee = getEmployeeByToken(token);
         
-        if(currentEmployee == null) {
+        if (currentEmployee == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
         Employee employeeToView = getEmployeeById(id);
         
-        if(!currentEmployee.isAdmin() || currentEmployee.getEmployeeId() != id) {
+        if (!currentEmployee.isAdmin() 
+                || currentEmployee.getEmployeeId() != id) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
         
         return Response.ok(employeeToView).build();
     }
     
+    /**
+     * Creates a new employee.
+     * @param token Authentication token.
+     * @param payload String containing all fields to create a new employee
+     * @return Response for REST call
+     */
     @Transactional
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -89,17 +116,17 @@ public class EmployeeService {
     public Response createEmployee(@HeaderParam("Authorization") String token,
             String payload) {
         token = token.replace("Bearer ", "");
-        if(!validateToken(token)) {
+        if (!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         
         Employee currentEmployee = getEmployeeByToken(token);
         
-        if(currentEmployee == null) {
+        if (currentEmployee == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        if(!currentEmployee.isAdmin()) {
+        if (!currentEmployee.isAdmin()) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -116,18 +143,30 @@ public class EmployeeService {
             em.refresh(employeeToBeAdded);
             em.getTransaction().commit();
 
-            returnCode = "{" + "\"href\":\"http://localhost:8080/COMP3910_assignment3/v1/user/" + employeeToBeAdded.getEmployeeId()
-                    + "\"," + "\"message\":\"New Employee successfully created.\"" + "}";
-        } catch (Exception err) {
+            returnCode = "{" + "\"href\":\"http://localhost:8080/"
+                    + "COMP3910_assignment3/v1/user/" 
+                    + employeeToBeAdded.getEmployeeId()
+                    + "\"," + "\"message\":\"New Employee "
+                            + "successfully created.\"" + "}";
+        } catch (IllegalArgumentException err) {
             err.printStackTrace();
-            returnCode = "{\"status\":\"500\"," + "\"message\":\"Resource not created.\"" + "\"developerMessage\":\""
+            returnCode = "{\"status\":\"500\"," + "\"message\":"
+                    + "\"Resource not created.\"" + "\"developerMessage\":\""
                     + err.getMessage() + "\"" + "}";
-            return Response.status(Response.Status.NOT_FOUND).entity(returnCode).build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(returnCode).build();
 
         }
-        return Response.status(201).entity(returnCode).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(returnCode).build();
     }
     
+    /**
+     * Deletes a single employee.
+     * @param token Authentication token
+     * @param id ID of employee to be deleted
+     * @return Response of REST call
+     */
     @Transactional
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
@@ -136,17 +175,17 @@ public class EmployeeService {
     public Response deleteEmployee(@HeaderParam("Authorization") String token,
                                     @PathParam("id") long id) {
         token = token.replace("Bearer ", "");
-        if(!validateToken(token)) {
+        if (!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         
         Employee currentEmployee = getEmployeeByToken(token);
         
-        if(currentEmployee == null) {
+        if (currentEmployee == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        if(!currentEmployee.isAdmin()) {
+        if (!currentEmployee.isAdmin()) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         
@@ -162,34 +201,46 @@ public class EmployeeService {
             em.remove(existingEmployee);
             em.getTransaction().commit();
 //            em.close();
-            returnCode = "{" + "\"message\":\"Employee succesfully deleted\"" + "}";
+            returnCode = "{" + "\"message\":\"Employee succesfully deleted\"" 
+                    + "}";
         } catch (WebApplicationException err) {
             err.printStackTrace();
-            returnCode = "{\"status\":\"500\"," + "\"message\":\"Resource not deleted.\"" 
+            returnCode = "{\"status\":\"500\"," + "\"message\":"
+                    + "\"Resource not deleted.\"" 
                     + "\"developerMessage\":\""
                     + err.getMessage() + "\"" + "}";
-            return Response.status(500).entity(returnCode).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(returnCode).build();
         }
         return Response.ok(returnCode).build();
     }
     
+    /**
+     * Updates an existing employee object.
+     * @param token Authentication token
+     * @param id ID of employee to be updated
+     * @param payload String containing fields to be updated
+     * @return Response of REST call
+     */
     @Transactional
     @PUT
     @Path("employees/{id}")
     @Consumes("application/json")
-    public Response updateEmployee(@HeaderParam("Authorization") String token, @PathParam("id") int id, String payload) {
+    public Response updateEmployee(@HeaderParam("Authorization") String token, 
+            @PathParam("id") int id, String payload) {
         token = token.replace("Bearer ", "");
-        if(!validateToken(token)) {
+        if (!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         
         Employee currentEmployee = getEmployeeByToken(token);
         
-        if(currentEmployee == null) {
+        if (currentEmployee == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
-        if(!currentEmployee.isAdmin() || currentEmployee.getEmployeeId() != id) {
+        if (!currentEmployee.isAdmin() 
+                || currentEmployee.getEmployeeId() != id) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         
@@ -206,22 +257,29 @@ public class EmployeeService {
         Employee entity = em.find(Employee.class, id);
         if (entity == null) {
             String returnCode = "{ Employee not found }";
-            return Response.status(404).entity(returnCode).build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(returnCode).build();
         }
 
         entity.setPassword(employee.getPassword());
         em.persist(entity);
         em.flush();
         em.getTransaction().commit();
-        String returnCode = "{" + employee.getName() 
+        String returnCode = "{" + employee.getEmployeeId() 
             + ":\"Employee successfully edited.\"" + "}";
-        return Response.status(201).entity(returnCode).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(returnCode).build();
     }
     
+    /**
+     * Gets the token from the database.
+     * @param token Token to get from the database.
+     * @return Token
+     */
     private Token getToken(String token) {
         TypedQuery<Token> query = em.createQuery(
-                "select t from Token t where token=:token and isactive=:isactive",
-                Token.class);
+              "select t from Token t where token=:token and isactive=:isactive",
+              Token.class);
         query.setParameter("token", token);
         query.setParameter("isactive", true);
         Token activeToken;
@@ -234,20 +292,27 @@ public class EmployeeService {
         return activeToken;
     }
 
+    /**
+     * Validates if the token is an active token.
+     * @param token to validate
+     * @return true if it token is not null
+     */
     private boolean validateToken(String token) {
         Token activeToken = getToken(token);
-        if (activeToken == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(activeToken == null);
     }
     
+    /**
+     * Gets the employee from the DB using the token.
+     * @param token of employee to be found
+     * @return Employee object
+     */
     private Employee getEmployeeByToken(String token) {
         Token activeToken = getToken(token);
         long employeeId = activeToken.getEmployeeId();
         TypedQuery<Employee> query = em.createQuery(
-                "select e from Employee e where employeeid=:employeeid", Employee.class);
+                "select e from Employee e where employeeid=:employeeid",
+                Employee.class);
         query.setParameter("employeeid", employeeId);
         Employee currentEmployee;
         try {
@@ -259,7 +324,12 @@ public class EmployeeService {
         return currentEmployee;
     }
     
-    private final Employee getEmployeeById(long employeeId) {
+    /**
+     * Gets the employee from the DB by ID.
+     * @param employeeId of employee to be found
+     * @return Employee object
+     */
+    private Employee getEmployeeById(long employeeId) {
         TypedQuery<Employee> query = em.createQuery(
                 "select e from Employee e where employeeid=:employeeid",
                 Employee.class);
@@ -274,7 +344,11 @@ public class EmployeeService {
         return employee;
     }
     
-    private final List<Employee> getAllEmployees() {
+    /**
+     * Gets a list of all employees in the db.
+     * @return List of all employee in the DB
+     */
+    private List<Employee> getAllEmployees() {
         TypedQuery<Employee> query = em.createQuery(
                 "select e from Employee e",
                 Employee.class);
