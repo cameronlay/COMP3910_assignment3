@@ -37,7 +37,7 @@ public class EmployeeService {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSuppliers(@HeaderParam("authentication") String token) {
+    public Response getSuppliers(@HeaderParam("Authorization") String token) {
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -60,7 +60,7 @@ public class EmployeeService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEmployee(@HeaderParam("token") String token, @PathParam("id") long id) {
+    public Response getEmployee(@HeaderParam("Authorization") String token, @PathParam("id") long id) {
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -83,7 +83,7 @@ public class EmployeeService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createEmployee(@HeaderParam("token") String token,
+    public Response createEmployee(@HeaderParam("Authorization") String token,
             String payload) {
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
@@ -113,7 +113,7 @@ public class EmployeeService {
             em.getTransaction().commit();
             em.close();
 
-            returnCode = "{" + "\"href\":\"http://localhost:8080/rest/supplierservice/supplier/" + employeeToBeAdded.getName()
+            returnCode = "{" + "\"href\":\"http://localhost:8080/COMP3910_assignment3/v1/user/" + employeeToBeAdded.getName()
                     + "\"," + "\"message\":\"New Supplier successfully created.\"" + "}";
         } catch (Exception err) {
             err.printStackTrace();
@@ -130,7 +130,7 @@ public class EmployeeService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("delete/{id}")
-    public Response deleteEmployee(@HeaderParam("token") String token,
+    public Response deleteEmployee(@HeaderParam("Authorization") String token,
                                     @PathParam("id") long id) {
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
