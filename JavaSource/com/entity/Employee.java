@@ -36,8 +36,11 @@ public class Employee implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "firstname")
+    private String firstName;
+
+    @Column(name = "lastname")
+    private String lastName;
 
     @Column(name = "username")
     private String userName;
@@ -57,8 +60,9 @@ public class Employee implements Serializable {
     public Employee() {
 
     }
-    public Employee(String name, String userName, String password, boolean admin) {
-        this.name = name;
+    public Employee(String firstName, String lastName, String userName, String password, boolean admin) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.userName = userName;
         this.password = password;
         this.admin = admin;
@@ -85,17 +89,26 @@ public class Employee implements Serializable {
      * Gets the employee name.
      * @return employee name
      */
-    @XmlElement
-    public String getName() {
-        return name;
+    @XmlElement(name="firstName")
+    public String getFirstName() {
+        return firstName;
     }
 
     /**
      * Sets the employee name.
      * @param name new employee name
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @XmlElement(name="lastName")
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**
@@ -165,11 +178,11 @@ public class Employee implements Serializable {
     public void setAdmin(boolean admin) {
         this.admin = admin;
     }
-    
+
     @Override
     public String toString() {
         Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        String json = gson.toJson(this);  
+        String json = gson.toJson(this);
         return json + "\n";
     }
 
