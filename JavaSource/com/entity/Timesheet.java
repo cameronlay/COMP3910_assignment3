@@ -2,6 +2,7 @@ package com.entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -41,6 +43,9 @@ public class Timesheet implements Serializable {
 
     @Column(name = "startweek")
     private Date startWeek;
+
+    @Transient
+    private List<TimesheetRow> timesheetRows;
 
     /**
      * Default constructor.
@@ -115,6 +120,19 @@ public class Timesheet implements Serializable {
      */
     public void setStartWeek(Date startWeek) {
         this.startWeek = startWeek;
+    }
+
+    @XmlElement(name="timesheetRows")
+    public List<TimesheetRow> getTimesheetRows() {
+        return timesheetRows;
+    }
+
+    public void setTimesheetRows(List<TimesheetRow> timesheetRows) {
+        this.timesheetRows = timesheetRows;
+    }
+
+    public void addTimesheetRow(TimesheetRow timesheetRow) {
+        timesheetRows.add(timesheetRow);
     }
 
 

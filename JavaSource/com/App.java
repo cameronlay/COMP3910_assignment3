@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import com.webservice.TimesheetService;
 import com.webservice.TokenService;
 
 @ApplicationPath("/v1")
@@ -15,8 +16,7 @@ public class App extends Application {
     public App() {
         singletons.add(new TokenService());
 //        singletons.add(new EmployeeService());
-//        singletons.add(new TimesheetRowService());
-//        singletons.add(new TimesheetService());
+        singletons.add(new TimesheetService());
     }
 
     @Override
