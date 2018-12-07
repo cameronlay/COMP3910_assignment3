@@ -13,6 +13,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.entity.Employee;
 import com.entity.Token;
@@ -30,18 +32,21 @@ public class TokenService {
 
     @Transactional
     @POST
-    @Produces("application/json")
-    @Consumes("application/json")
-    public Token createToken(Employee employee) {
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createToken(Employee employee) {
         String username;
         String password;
         try {
             username = employee.getUserName();
             password = employee.getPassword();
         } catch (NullPointerException e) {
-            return null;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Please provide userName and password").build();
         }
         Employee currentEmployee = getEmployeeByUsernameAndPassword(username, password);
+        if (currentEmployee == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Please check your userName and password").build();
+        }
         Token activeToken = getActiveTokenByUsername(username);
         if (activeToken != null) {
             activeToken.setActive(false);
@@ -62,7 +67,7 @@ public class TokenService {
         em.getTransaction().begin();
         em.persist(newToken);
         em.getTransaction().commit();
-        return newToken;
+        return Response.status(Response.Status.OK).entity(newToken).build();
     }
 
     private final Employee getEmployeeByUsernameAndPassword(String username, String password) {
@@ -71,7 +76,13 @@ public class TokenService {
                 Employee.class);
         query.setParameter("username", username);
         query.setParameter("password", password);
-        return query.getSingleResult();
+        Employee currentEmployee;
+        try {
+            currentEmployee = query.getSingleResult();
+        } catch(NoResultException e) {
+            currentEmployee = null;
+        }
+        return currentEmployee;
     }
 
     private final Token getActiveTokenByUsername(String username) {

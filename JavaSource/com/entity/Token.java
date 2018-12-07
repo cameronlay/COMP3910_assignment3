@@ -13,11 +13,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * The Persistent class for the Employee database table.
- * @author Cameron
- * @version 1.0
- */
 @XmlRootElement(name="token")
 @Entity
 @Table(name = "Token")
