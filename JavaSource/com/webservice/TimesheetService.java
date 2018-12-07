@@ -12,6 +12,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.entity.Employee;
 import com.entity.Timesheet;
@@ -32,18 +33,18 @@ public class TimesheetService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<Timesheet> getAllTimesheets(@HeaderParam("Authorization") String token) {
+    public Response getAllTimesheets(@HeaderParam("Authorization") String token) {
         token = token.replace("Bearer ", "");
         if (!validateToken(token)) {
-            return null;
+            return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized").build();
         }
         Employee currentEmployee = getEmployeeByToken(token);
         if (currentEmployee == null) {
-            return null;
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Employee does not exist in database").build();
         }
         List<Timesheet> timesheets = getTimesheetsByEmployeeId(currentEmployee.getEmployeeId());
         if (timesheets == null) {
-            return null;
+            return Response.status(Response.Status.NO_CONTENT).entity("Timesheet does not exist").build();
         }
         for (Timesheet timesheet : timesheets) {
             List<TimesheetRow> timesheetRows = getTimesheetRowsByTimesheetId(timesheet.getTimesheetId());
@@ -52,7 +53,7 @@ public class TimesheetService {
             }
             timesheet.setTimesheetRows(timesheetRows);
         }
-        return timesheets;
+        return Response.status(Response.Status.OK).entity(timesheets).build();
     }
 
     private final Token getTokenByToken(String token) {
