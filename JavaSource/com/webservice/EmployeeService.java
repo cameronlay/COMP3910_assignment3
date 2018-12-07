@@ -37,7 +37,7 @@ public class EmployeeService {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSuppliers(@HeaderParam("Authorization") String token) {
+    public Response getEmployees(@HeaderParam("Authorization") String token) {
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -113,8 +113,8 @@ public class EmployeeService {
             em.getTransaction().commit();
             em.close();
 
-            returnCode = "{" + "\"href\":\"http://localhost:8080/COMP3910_assignment3/v1/user/" + employeeToBeAdded.getName()
-                    + "\"," + "\"message\":\"New Supplier successfully created.\"" + "}";
+            returnCode = "{" + "\"href\":\"http://localhost:8080/COMP3910_assignment3/v1/user/" + employeeToBeAdded.getEmployeeId()
+                    + "\"," + "\"message\":\"New Employee successfully created.\"" + "}";
         } catch (Exception err) {
             err.printStackTrace();
             returnCode = "{\"status\":\"500\"," + "\"message\":\"Resource not created.\"" + "\"developerMessage\":\""
@@ -158,7 +158,7 @@ public class EmployeeService {
             em.remove(existingEmployee);
             em.getTransaction().commit();
             em.close();
-            returnCode = "{" + "\"message\":\"Supplier succesfully deleted\"" + "}";
+            returnCode = "{" + "\"message\":\"Employee succesfully deleted\"" + "}";
         } catch (WebApplicationException err) {
             err.printStackTrace();
             returnCode = "{\"status\":\"500\"," + "\"message\":\"Resource not deleted.\"" 
