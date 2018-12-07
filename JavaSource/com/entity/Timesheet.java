@@ -146,6 +146,4 @@ public class Timesheet implements Serializable {
     public void addTimesheetRow(TimesheetRow timesheetRow) {
         timesheetRows.add(timesheetRow);
     }
-
-
 }
