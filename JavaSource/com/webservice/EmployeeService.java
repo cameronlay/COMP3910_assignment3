@@ -21,7 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.entity.Employee;
+import com.entity.Supplier;
 import com.entity.Token;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.qualifier.Resource;
 
 @Path("/user")
@@ -83,10 +86,7 @@ public class EmployeeService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createEmployee(@HeaderParam("token") String token,
-            @FormParam("username") String username,
-            @FormParam("password") String password,
-            @FormParam("confirmpassword") String confirmPassword,
-            @FormParam("firstname") String name) {
+            String payload) {
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -100,19 +100,31 @@ public class EmployeeService {
         if(!currentEmployee.isAdmin()) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
-        
-        if (!password.equals(confirmPassword)) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        }
-
-        if (username == null || password == null || confirmPassword == null
-                || name == null) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
-        }
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        Employee employeeToBeAdded = gson.fromJson(payload, Employee.class);
       
-        Employee employeeToAdd = new Employee(name, username, password, false);
+        String returnCode = "200";
         em = Resource.getEntityManager();
-        return Response.ok(employeeToAdd).build();
+
+        try {
+            em.getTransaction().begin();
+            em.persist(employeeToBeAdded);
+            em.flush();
+            em.refresh(employeeToBeAdded);
+            em.getTransaction().commit();
+            em.close();
+
+            returnCode = "{" + "\"href\":\"http://localhost:8080/rest/supplierservice/supplier/" + employeeToBeAdded.getName()
+                    + "\"," + "\"message\":\"New Supplier successfully created.\"" + "}";
+        } catch (Exception err) {
+            err.printStackTrace();
+            returnCode = "{\"status\":\"500\"," + "\"message\":\"Resource not created.\"" + "\"developerMessage\":\""
+                    + err.getMessage() + "\"" + "}";
+            return Response.status(404).entity(returnCode).build();
+
+        }
+        return Response.status(201).entity(returnCode).build();
     }
     
     @Transactional
@@ -135,6 +147,11 @@ public class EmployeeService {
         if(!currentEmployee.isAdmin()) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
+        
+        if (currentEmployee.getEmployeeId() == id) {
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
+        }
+        
         em = Resource.getEntityManager();
         String returnCode = "";
         try {
