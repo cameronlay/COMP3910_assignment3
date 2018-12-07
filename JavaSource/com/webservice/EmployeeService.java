@@ -38,6 +38,7 @@ public class EmployeeService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEmployees(@HeaderParam("Authorization") String token) {
+        token = token.replace("Bearer ", "");
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -61,6 +62,7 @@ public class EmployeeService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEmployee(@HeaderParam("Authorization") String token, @PathParam("id") long id) {
+        token = token.replace("Bearer ", "");
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -72,7 +74,7 @@ public class EmployeeService {
         
         Employee employeeToView = getEmployeeById(id);
         
-        if(!currentEmployee.isAdmin() || currentEmployee.getEmployeeId() != employeeToView.getEmployeeId()) {
+        if(!currentEmployee.isAdmin() || currentEmployee.getEmployeeId() != id) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
         
@@ -85,6 +87,7 @@ public class EmployeeService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createEmployee(@HeaderParam("Authorization") String token,
             String payload) {
+        token = token.replace("Bearer ", "");
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -111,7 +114,7 @@ public class EmployeeService {
             em.flush();
             em.refresh(employeeToBeAdded);
             em.getTransaction().commit();
-            em.close();
+//            em.close();
 
             returnCode = "{" + "\"href\":\"http://localhost:8080/COMP3910_assignment3/v1/user/" + employeeToBeAdded.getEmployeeId()
                     + "\"," + "\"message\":\"New Employee successfully created.\"" + "}";
@@ -119,7 +122,7 @@ public class EmployeeService {
             err.printStackTrace();
             returnCode = "{\"status\":\"500\"," + "\"message\":\"Resource not created.\"" + "\"developerMessage\":\""
                     + err.getMessage() + "\"" + "}";
-            return Response.status(404).entity(returnCode).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(returnCode).build();
 
         }
         return Response.status(201).entity(returnCode).build();
@@ -132,6 +135,7 @@ public class EmployeeService {
     @Path("delete/{id}")
     public Response deleteEmployee(@HeaderParam("Authorization") String token,
                                     @PathParam("id") long id) {
+        token = token.replace("Bearer ", "");
         if(!validateToken(token)) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
@@ -157,7 +161,7 @@ public class EmployeeService {
             Employee existingEmployee = em.find(Employee.class, id);
             em.remove(existingEmployee);
             em.getTransaction().commit();
-            em.close();
+//            em.close();
             returnCode = "{" + "\"message\":\"Employee succesfully deleted\"" + "}";
         } catch (WebApplicationException err) {
             err.printStackTrace();
@@ -170,23 +174,28 @@ public class EmployeeService {
     }
     
     private Token getToken(String token) {
-        Token activeToken = null;
         TypedQuery<Token> query = em.createQuery(
                 "select t from Token t where token=:token and isactive=:isactive",
                 Token.class);
         query.setParameter("token", token);
         query.setParameter("isactive", true);
+        Token activeToken;
         try {
             activeToken = query.getSingleResult();
         } catch (NoResultException e) {
             e.printStackTrace();
+            activeToken = null;
         }
         return activeToken;
     }
 
     private boolean validateToken(String token) {
         Token activeToken = getToken(token);
-        return activeToken == null;
+        if (activeToken == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
     private Employee getEmployeeByToken(String token) {
