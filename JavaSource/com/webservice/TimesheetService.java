@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -40,8 +41,6 @@ import com.qualifier.Resource;
 @Path("/timesheet")
 public class TimesheetService {
 
-    private static final int LEFT_DAYS = 6;
-
     @Inject
     private EntityManager em;
 
@@ -66,28 +65,35 @@ public class TimesheetService {
             @HeaderParam("Authorization") String token,
             @QueryParam("weekNumber") Integer weekNumber,
             @Context UriInfo uriInfo) {
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("uri", uriInfo.getAbsolutePath().toString());
 
         token = token.replace("Bearer ", "");
         if (!validateToken(token)) {
-            Map<String, String> errorMap = new HashMap<>();
-            errorMap.put("uri", uriInfo.getAbsolutePath().toString());
-            errorMap.put("message", "Unauthorized");
-            errorMap.put("status", Response.Status.UNAUTHORIZED + "");
+            responseMap.put("message", Response.Status.UNAUTHORIZED.toString());
+            responseMap.put("status", Response.Status.UNAUTHORIZED + "");
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(errorMap).build();
+                    .entity(responseMap).build();
         }
         Employee currentEmployee = getEmployeeByToken(token);
         if (currentEmployee == null) {
+            responseMap.put("message",
+                    Response.Status.INTERNAL_SERVER_ERROR.toString());
+            responseMap.put("status",
+                    Response.Status.INTERNAL_SERVER_ERROR + "");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Employee does not exist in database").build();
+                    .entity(responseMap).build();
         }
 
         if (weekNumber == null) {
             List<Timesheet> timesheets =
                     getTimesheetsByEmployeeId(currentEmployee.getEmployeeId());
             if (timesheets == null) {
+                responseMap.put("message",
+                        Response.Status.NO_CONTENT.toString());
+                responseMap.put("status", Response.Status.NO_CONTENT + "");
                 return Response.status(Response.Status.NO_CONTENT)
-                        .entity("Timesheet does not exist").build();
+                        .entity(responseMap).build();
             }
             for (Timesheet timesheet : timesheets) {
                 List<TimesheetRow> timesheetRows =
@@ -104,6 +110,9 @@ public class TimesheetService {
             Timesheet timesheet = getTimesheetByEmployeeIdWeekNumber(
                     currentEmployee.getEmployeeId(), weekNumber);
             if (timesheet == null) {
+                responseMap.put("message",
+                        Response.Status.NO_CONTENT.toString());
+                responseMap.put("status", Response.Status.NO_CONTENT + "");
                 return Response.status(Response.Status.NO_CONTENT).
                         entity("Timesheet does not exist in that week").build();
             }
@@ -117,6 +126,7 @@ public class TimesheetService {
     /**
      * get current timesheet.
      * @param token user token
+     * @param uriInfo uri information
      * @return response object
      */
     @GET
@@ -124,22 +134,34 @@ public class TimesheetService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getCurrentTimesheet(
-            @HeaderParam("Authorization") String token) {
+            @HeaderParam("Authorization") String token,
+            @Context UriInfo uriInfo) {
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("uri", uriInfo.getAbsolutePath().toString());
+
         token = token.replace("Bearer ", "");
         if (!validateToken(token)) {
+            responseMap.put("message", Response.Status.UNAUTHORIZED.toString());
+            responseMap.put("status", Response.Status.UNAUTHORIZED + "");
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Unauthorized").build();
+                    .entity(responseMap).build();
         }
         Employee currentEmployee = getEmployeeByToken(token);
         if (currentEmployee == null) {
+            responseMap.put("message",
+                    Response.Status.INTERNAL_SERVER_ERROR.toString());
+            responseMap.put("status",
+                    Response.Status.INTERNAL_SERVER_ERROR + "");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Employee does not exist in database").build();
+                    .entity(responseMap).build();
         }
         Timesheet timesheet = getTimesheetByEmployeeIdWeekNumber(
                 currentEmployee.getEmployeeId(), getWeekNumber());
         if (timesheet == null) {
+            responseMap.put("message", Response.Status.NO_CONTENT.toString());
+            responseMap.put("status", Response.Status.NO_CONTENT + "");
             return Response.status(Response.Status.NO_CONTENT)
-                    .entity("Current timesheet does not exist").build();
+                    .entity(responseMap).build();
         }
         timesheet.setTimesheetRows(getTimesheetRowsByTimesheetId(
                 timesheet.getTimesheetId()));
@@ -151,6 +173,7 @@ public class TimesheetService {
      * @param token user token
      * @param timesheet timesheet object
      * @param weekNumber integer
+     * @param uriInfo uri information
      * @return response object
      */
     @Transactional
@@ -159,28 +182,34 @@ public class TimesheetService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response saveTimesheet(
             @HeaderParam("Authorization") String token,
-            Timesheet timesheet,
-            @QueryParam("weekNumber") Integer weekNumber) {
+            @QueryParam("weekNumber") Integer weekNumber,
+            @Context UriInfo uriInfo,
+            Timesheet timesheet) {
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("uri", uriInfo.getAbsolutePath().toString());
+
         token = token.replace("Bearer ", "");
         if (!validateToken(token)) {
+            responseMap.put("message", Response.Status.UNAUTHORIZED.toString());
+            responseMap.put("status", Response.Status.UNAUTHORIZED + "");
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("Unauthorized").build();
+                    .entity(responseMap).build();
         }
         Employee currentEmployee = getEmployeeByToken(token);
         if (currentEmployee == null) {
+            responseMap.put("message",
+                    Response.Status.INTERNAL_SERVER_ERROR.toString());
+            responseMap.put("status",
+                    Response.Status.INTERNAL_SERVER_ERROR + "");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Employee does not exist in database").build();
+                    .entity(responseMap).build();
         }
-        timesheet.setStartWeek(getStartWeek());
-        timesheet.setEndWeek(getEndWeek());
+        Integer weekNum = weekNumber == null ? getWeekNumber() : weekNumber;
+
+        timesheet.setStartWeek(getSaturdayByWeekNumber(weekNum));
+        timesheet.setEndWeek(getFridayByWeekNumber(weekNum));
         timesheet.setEmployeeId(currentEmployee.getEmployeeId());
         List<TimesheetRow> timesheetRows = timesheet.getTimesheetRows();
-        Integer weekNum = null;
-        if (weekNumber == null) {
-            weekNum = getWeekNumber();
-        } else {
-            weekNum = weekNumber;
-        }
         Timesheet currentTimesheet = getTimesheetByEmployeeIdWeekNumber(
                 currentEmployee.getEmployeeId(), weekNum);
         if (currentTimesheet == null) {
@@ -188,7 +217,7 @@ public class TimesheetService {
             em.persist(timesheet);
             em.getTransaction().commit();
             currentTimesheet = getTimesheetByEmployeeIdWeekNumber(
-                    currentEmployee.getEmployeeId(), getWeekNumber());
+                    currentEmployee.getEmployeeId(), weekNum);
         } else {
             deleteTimesheetRowsByTimesheetId(currentTimesheet.getTimesheetId());
         }
@@ -201,30 +230,6 @@ public class TimesheetService {
         currentTimesheet.setTimesheetRows(timesheetRows);
         return Response.status(Response.Status.OK)
                 .entity(currentTimesheet).build();
-    }
-
-    /**
-     * get start week, saturday.
-     * @return saturday
-     */
-    private Date getStartWeek() {
-        Calendar c = new GregorianCalendar();
-        int currentDay = c.get(Calendar.DAY_OF_WEEK);
-        int leftDays = Calendar.FRIDAY - currentDay - LEFT_DAYS;
-        c.add(Calendar.DATE, leftDays);
-        return new Date(c.getTime().getTime());
-    }
-
-    /**
-     * get end week, friday.
-     * @return friday
-     */
-    private Date getEndWeek() {
-        Calendar c = new GregorianCalendar();
-        int currentDay = c.get(Calendar.DAY_OF_WEEK);
-        int leftDays = Calendar.FRIDAY - currentDay;
-        c.add(Calendar.DATE, leftDays);
-        return new Date(c.getTime().getTime());
     }
 
     /**
@@ -261,6 +266,8 @@ public class TimesheetService {
             timesheet = query.getSingleResult();
         } catch (NoResultException e) {
             timesheet = null;
+        } catch (NonUniqueResultException e) {
+            timesheet = null;
         }
         return timesheet;
     }
@@ -274,6 +281,18 @@ public class TimesheetService {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.WEEK_OF_YEAR, weekNumber);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        return new Date(cal.getTimeInMillis());
+    }
+
+    /**
+     * get friday by week number.
+     * @param weekNumber week number
+     * @return friday
+     */
+    private Date getFridayByWeekNumber(int weekNumber) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.WEEK_OF_YEAR, weekNumber);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
         return new Date(cal.getTimeInMillis());
     }
 

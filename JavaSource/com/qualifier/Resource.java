@@ -5,9 +5,18 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.ws.rs.Produces;
 
+/**
+ * Resource initializes Entity Manager from persistence xml.
+ * @author Sunguk Ham
+ * @version 1.0
+ */
 public class Resource {
     private static EntityManagerFactory mgr;
-    
+
+    /**
+     * get Entity Manager from persistence.
+     * @return entity manager
+     */
     @Produces
     public static EntityManager getEntityManager() {
         if (mgr == null) {
