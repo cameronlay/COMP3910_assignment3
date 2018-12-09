@@ -221,3 +221,18 @@ insert into timesheetrow (timesheetid, projectid, workpackage, monday, tuesday, 
     values(10, 1, 'wp2', 9, 7, 5, 4, 4, 0, 0, 'Final presentation');
 insert into timesheetrow (timesheetid, projectid, workpackage, monday, tuesday, wednesday, thursday, friday, saturday, sunday, notes)
     values(10, 2, 'wp2', 5, 5, 5, 4, 4, 0, 0, 'Selling');
+    
+drop procedure if exists deactivatetoken;
+DELIMITER //
+CREATE PROCEDURE deactivatetoken()
+    BEGIN
+		update token
+			set isactive = false
+            where expirydate < now();
+    END //
+DELIMITER ;
+
+CREATE EVENT myevent
+    ON SCHEDULE EVERY 86400 SECOND
+    DO
+      CALL delete_rows_links();
