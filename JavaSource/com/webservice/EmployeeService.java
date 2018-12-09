@@ -129,9 +129,16 @@ public class EmployeeService {
         if (!currentEmployee.isAdmin()) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
+        List<Employee> allEmployees = getAllEmployees();
         GsonBuilder gsonBuilder = new GsonBuilder();
         Gson gson = gsonBuilder.create();
         Employee employeeToBeAdded = gson.fromJson(payload, Employee.class);
+        for (Employee e : allEmployees) {
+            if (e.getUserName()
+                    .equalsIgnoreCase(employeeToBeAdded.getUserName())) {
+                throw new WebApplicationException(Response.Status.CONFLICT);
+            }
+        }
       
         String returnCode = "200";
         em = Resource.getEntityManager();
