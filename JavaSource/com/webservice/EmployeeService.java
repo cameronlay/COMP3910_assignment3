@@ -251,9 +251,6 @@ public class EmployeeService {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
         
-        if (currentEmployee.getEmployeeId() == id) {
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
-        }
         GsonBuilder gsonBuilder = new GsonBuilder();
         Gson gson = gsonBuilder.create();
         Employee employee = gson.fromJson(payload, Employee.class);
