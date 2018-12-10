@@ -1,0 +1,217 @@
+{
+	"info": {
+		"_postman_id": "753851c3-52d6-474d-b770-f749e4ccaa5f",
+		"name": "timesheet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get all timesheet",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "11bc82ad-da29-47f2-a1ba-5b44ad12ff7f",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/COMP3910_assignment3/v1/timesheet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"COMP3910_assignment3",
+						"v1",
+						"timesheet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get current timesheet",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "11bc82ad-da29-47f2-a1ba-5b44ad12ff7f",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/COMP3910_assignment3/v1/timesheet/current",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"COMP3910_assignment3",
+						"v1",
+						"timesheet",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get timesheet by weeknumber",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "37367f25-1f1b-4120-b291-7517c3d53c88",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/COMP3910_assignment3/v1/timesheet?weekNumber=45",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"COMP3910_assignment3",
+						"v1",
+						"timesheet"
+					],
+					"query": [
+						{
+							"key": "weekNumber",
+							"value": "45"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "saving timesheet by week number",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "11bc82ad-da29-47f2-a1ba-5b44ad12ff7f",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"timesheetRows\": [\n        {\n            \"projectId\": 1,\n            \"workPackageId\": \"wp1\",\n            \"monday\": 5,\n            \"tuesday\": 2,\n            \"wednesday\": 3,\n            \"thursday\": 7,\n            \"friday\": 9,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Made database working\"\n        },\n        {\n            \"projectId\": 2,\n            \"workPackageId\": \"wp1\",\n            \"monday\": 8,\n            \"tuesday\": 8,\n            \"wednesday\": 8,\n            \"thursday\": 7,\n            \"friday\": 9,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"UX/UI design\"\n        },\n        {\n            \"projectId\": 3,\n            \"workPackageId\": \"wp1\",\n            \"monday\": 8,\n            \"tuesday\": 8,\n            \"wednesday\": 8,\n            \"thursday\": 10,\n            \"friday\": 6,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Set up model classes\"\n        },\n        {\n            \"projectId\": 1,\n            \"workPackageId\": \"wp2\",\n            \"monday\": 7,\n            \"tuesday\": 9,\n            \"wednesday\": 8,\n            \"thursday\": 8,\n            \"friday\": 8,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Set up controllers\"\n        },\n        {\n            \"projectId\": 2,\n            \"workPackageId\": \"wp2\",\n            \"monday\": 9,\n            \"tuesday\": 9,\n            \"wednesday\": 9,\n            \"thursday\": 9,\n            \"friday\": 9,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Final presentation\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/COMP3910_assignment3/v1/timesheet?weekNumber=41",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"COMP3910_assignment3",
+						"v1",
+						"timesheet"
+					],
+					"query": [
+						{
+							"key": "weekNumber",
+							"value": "41"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "saving current timesheet",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "11bc82ad-da29-47f2-a1ba-5b44ad12ff7f",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"timesheetRows\": [\n        {\n            \"projectId\": 1,\n            \"workPackageId\": \"wp1\",\n            \"monday\": 5,\n            \"tuesday\": 2,\n            \"wednesday\": 3,\n            \"thursday\": 7,\n            \"friday\": 9,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Made database working\"\n        },\n        {\n            \"projectId\": 2,\n            \"workPackageId\": \"wp1\",\n            \"monday\": 8,\n            \"tuesday\": 8,\n            \"wednesday\": 8,\n            \"thursday\": 7,\n            \"friday\": 9,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"UX/UI design\"\n        },\n        {\n            \"projectId\": 3,\n            \"workPackageId\": \"wp1\",\n            \"monday\": 8,\n            \"tuesday\": 8,\n            \"wednesday\": 8,\n            \"thursday\": 10,\n            \"friday\": 6,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Set up model classes\"\n        },\n        {\n            \"projectId\": 1,\n            \"workPackageId\": \"wp2\",\n            \"monday\": 7,\n            \"tuesday\": 9,\n            \"wednesday\": 8,\n            \"thursday\": 8,\n            \"friday\": 8,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Set up controllers\"\n        },\n        {\n            \"projectId\": 2,\n            \"workPackageId\": \"wp2\",\n            \"monday\": 9,\n            \"tuesday\": 9,\n            \"wednesday\": 9,\n            \"thursday\": 9,\n            \"friday\": 9,\n            \"saturday\": 0,\n            \"sunday\": 0,\n            \"notes\": \"Final presentation\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/COMP3910_assignment3/v1/timesheet?weekNumber=41",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"COMP3910_assignment3",
+						"v1",
+						"timesheet"
+					],
+					"query": [
+						{
+							"key": "weekNumber",
+							"value": "41"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

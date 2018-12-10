@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "59371bce-31fb-402d-8e6f-75ba0264172e",
+		"name": "registration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "registration",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userName\":\"Test123Test123\",\n\t\"password\":\"Test123Test123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/COMP3910_assignment3/v1/registration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"COMP3910_assignment3",
+						"v1",
+						"registration"
+					]
+				},
+				"description": "token registration"
+			},
+			"response": []
+		}
+	]
+}
